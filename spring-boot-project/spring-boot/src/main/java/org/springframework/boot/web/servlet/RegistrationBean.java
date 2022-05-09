@@ -43,6 +43,11 @@ public abstract class RegistrationBean implements ServletContextInitializer, Ord
 
 	private boolean enabled = true;
 
+	/**
+	 * webServer启动时将servlet注册到servlet容器（servletContext）
+	 * @param servletContext the {@code ServletContext} to initialize
+	 * @throws ServletException
+	 */
 	@Override
 	public final void onStartup(ServletContext servletContext) throws ServletException {
 		String description = getDescription();
@@ -50,6 +55,7 @@ public abstract class RegistrationBean implements ServletContextInitializer, Ord
 			logger.info(StringUtils.capitalize(description) + " was not registered (disabled)");
 			return;
 		}
+		// 将servlet注册到servlet容器
 		register(description, servletContext);
 	}
 

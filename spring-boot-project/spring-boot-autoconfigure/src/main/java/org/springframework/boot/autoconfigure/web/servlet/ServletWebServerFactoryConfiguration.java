@@ -47,11 +47,19 @@ import org.springframework.context.annotation.Configuration;
  * @author Ivan Sopov
  * @author Brian Clozel
  * @author Stephane Nicoll
+ *
+ * 配置类，创建webServerFactory
  */
 @Configuration
 class ServletWebServerFactoryConfiguration {
 
+	/**
+	 *
+	 */
 	@Configuration
+	// 条件注解：根据项目中有什么类从而生效@bean
+	// 编译期是会有三个webServer的类的，不然编译期是会包括，这有springboot-embed而来
+	// 但运行期判断的是springboot.jar中是否会有这些类，而springboot.jar中是不会有这些embed依赖包的(maven某种打包方式可以是实现这种)
 	@ConditionalOnClass({ Servlet.class, Tomcat.class, UpgradeProtocol.class })
 	@ConditionalOnMissingBean(value = ServletWebServerFactory.class, search = SearchStrategy.CURRENT)
 	static class EmbeddedTomcat {

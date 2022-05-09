@@ -134,10 +134,14 @@ public class JettyServletWebServerFactory extends AbstractServletWebServerFactor
 
 	@Override
 	public WebServer getWebServer(ServletContextInitializer... initializers) {
+
+
 		JettyEmbeddedWebAppContext context = new JettyEmbeddedWebAppContext();
 		int port = (getPort() >= 0) ? getPort() : 0;
 		InetSocketAddress address = new InetSocketAddress(getAddress(), port);
 		Server server = createServer(address);
+
+
 		configureWebAppContext(context, initializers);
 		server.setHandler(addHandlerWrappers(context));
 		this.logger.info("Server initialized with port: " + port);
@@ -215,6 +219,7 @@ public class JettyServletWebServerFactory extends AbstractServletWebServerFactor
 		}
 		addLocaleMappings(context);
 		ServletContextInitializer[] initializersToUse = mergeInitializers(initializers);
+
 		Configuration[] configurations = getWebAppContextConfigurations(context, initializersToUse);
 		context.setConfigurations(configurations);
 		context.setThrowUnavailableOnStartupException(true);
@@ -395,6 +400,7 @@ public class JettyServletWebServerFactory extends AbstractServletWebServerFactor
 	 * @return a new {@link JettyWebServer} instance
 	 */
 	protected JettyWebServer getJettyWebServer(Server server) {
+
 		return new JettyWebServer(server, getPort() >= 0);
 	}
 

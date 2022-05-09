@@ -139,12 +139,19 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
  * @since 2.0.0
  */
 @Configuration
+// 当前是servlet
 @ConditionalOnWebApplication(type = Type.SERVLET)
+// 当前有这些类时
 @ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class })
+// 当前没有这个bean事
 @ConditionalOnMissingBean(WebMvcConfigurationSupport.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
+
+// 在这些配置类被初始化之后
 @AutoConfigureAfter({ DispatcherServletAutoConfiguration.class, TaskExecutionAutoConfiguration.class,
 		ValidationAutoConfiguration.class })
+
+// 才会初始化这个类
 public class WebMvcAutoConfiguration {
 
 	public static final String DEFAULT_PREFIX = "";

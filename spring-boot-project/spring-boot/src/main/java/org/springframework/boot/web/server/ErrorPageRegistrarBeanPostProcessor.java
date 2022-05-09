@@ -52,7 +52,10 @@ public class ErrorPageRegistrarBeanPostProcessor implements BeanPostProcessor, B
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		// ErrorPageFilter servletWebFactory是ErrorPageFilter实现类
 		if (bean instanceof ErrorPageRegistry) {
+
+			//
 			postProcessBeforeInitialization((ErrorPageRegistry) bean);
 		}
 		return bean;
@@ -65,6 +68,7 @@ public class ErrorPageRegistrarBeanPostProcessor implements BeanPostProcessor, B
 
 	private void postProcessBeforeInitialization(ErrorPageRegistry registry) {
 		for (ErrorPageRegistrar registrar : getRegistrars()) {
+			//
 			registrar.registerErrorPages(registry);
 		}
 	}
@@ -72,6 +76,7 @@ public class ErrorPageRegistrarBeanPostProcessor implements BeanPostProcessor, B
 	private Collection<ErrorPageRegistrar> getRegistrars() {
 		if (this.registrars == null) {
 			// Look up does not include the parent context
+			// 创建bean
 			this.registrars = new ArrayList<>(
 					this.beanFactory.getBeansOfType(ErrorPageRegistrar.class, false, false).values());
 			this.registrars.sort(AnnotationAwareOrderComparator.INSTANCE);

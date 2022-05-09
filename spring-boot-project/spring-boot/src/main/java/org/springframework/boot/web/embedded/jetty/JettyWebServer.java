@@ -105,6 +105,7 @@ public class JettyWebServer implements WebServer {
 					}
 
 				});
+				//
 				// Start the server so that the ServletContext is available
 				this.server.start();
 				this.server.setStopAtShutdown(false);

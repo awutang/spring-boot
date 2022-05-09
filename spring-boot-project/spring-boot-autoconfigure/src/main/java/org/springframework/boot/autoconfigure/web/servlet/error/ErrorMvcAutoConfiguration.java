@@ -117,6 +117,7 @@ public class ErrorMvcAutoConfiguration {
 
 	@Bean
 	public ErrorPageCustomizer errorPageCustomizer() {
+		//
 		return new ErrorPageCustomizer(this.serverProperties, this.dispatcherServletPath);
 	}
 
@@ -266,6 +267,8 @@ public class ErrorMvcAutoConfiguration {
 
 		@Override
 		public void registerErrorPages(ErrorPageRegistry errorPageRegistry) {
+
+			//
 			ErrorPage errorPage = new ErrorPage(
 					this.dispatcherServletPath.getRelativePath(this.properties.getError().getPath()));
 			errorPageRegistry.addErrorPages(errorPage);

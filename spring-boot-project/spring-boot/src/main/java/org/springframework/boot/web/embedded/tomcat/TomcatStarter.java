@@ -46,10 +46,18 @@ class TomcatStarter implements ServletContainerInitializer {
 		this.initializers = initializers;
 	}
 
+	/**
+	 * zhe个类没有使用HandlesTypes注解，所以，onStartup方法里面第一个参数就是一个空参数。
+	 * @param classes
+	 * @param servletContext
+	 * @throws ServletException
+	 */
 	@Override
 	public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
 		try {
 			for (ServletContextInitializer initializer : this.initializers) {
+
+				//
 				initializer.onStartup(servletContext);
 			}
 		}

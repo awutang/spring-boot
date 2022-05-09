@@ -138,6 +138,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	@Override
 	public final void refresh() throws BeansException, IllegalStateException {
 		try {
+			// 初始化applicationContext
 			super.refresh();
 		}
 		catch (RuntimeException ex) {
@@ -146,10 +147,15 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		}
 	}
 
+	/**
+	 * 从applicationContext.refresh()调用过来
+	 */
 	@Override
 	protected void onRefresh() {
+
 		super.onRefresh();
 		try {
+			// 创建webServer tomcat jetty
 			createWebServer();
 		}
 		catch (Throwable ex) {
@@ -176,7 +182,10 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		WebServer webServer = this.webServer;
 		ServletContext servletContext = getServletContext();
 		if (webServer == null && servletContext == null) {
+			// 扩展点，查看容器中存在什么bean就加载什么
 			ServletWebServerFactory factory = getWebServerFactory();
+
+			// getSelfInitializer() 会像servletContext注册DispatcherServlet
 			this.webServer = factory.getWebServer(getSelfInitializer());
 		}
 		else if (servletContext != null) {
@@ -203,10 +212,15 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 			throw new ApplicationContextException("Unable to start ServletWebServerApplicationContext due to missing "
 					+ "ServletWebServerFactory bean.");
 		}
+
+		// springboot.jar项目中不能同时存在两类web jar包
 		if (beanNames.length > 1) {
 			throw new ApplicationContextException("Unable to start ServletWebServerApplicationContext due to multiple "
 					+ "ServletWebServerFactory beans : " + StringUtils.arrayToCommaDelimitedString(beanNames));
 		}
+
+		// 此处获取bean,由于还未进行refresh()倒数第二步的实例创建过程，因此此处肯定会进行ServletWebServerFactory的生命周期，在此生命周期中
+		// 有一个BeanPostProcessor(ErrorPageRegistrarBeanPostProcessor),在执行BeanPostProcessor过程中最终会走到DispatcherServlet的生命周期
 		return getBeanFactory().getBean(beanNames[0], ServletWebServerFactory.class);
 	}
 
@@ -217,13 +231,17 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 * @see #prepareWebApplicationContext(ServletContext)
 	 */
 	private org.springframework.boot.web.servlet.ServletContextInitializer getSelfInitializer() {
+		// 对象名::方法名？？？可是这里返回的类型并不是方法引用
 		return this::selfInitialize;
 	}
 
 	private void selfInitialize(ServletContext servletContext) throws ServletException {
+
+		// 当前applicationContext设置到root 将当前的applicationContext设置，并且也设置ServletContext
 		prepareWebApplicationContext(servletContext);
 		registerApplicationScope(servletContext);
 		WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(), servletContext);
+		// RegistrationBean
 		for (ServletContextInitializer beans : getServletContextInitializerBeans()) {
 			beans.onStartup(servletContext);
 		}
@@ -261,6 +279,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 * @param servletContext the operational servlet context
 	 */
 	protected void prepareWebApplicationContext(ServletContext servletContext) {
+
 		Object rootContext = servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 		if (rootContext != null) {
 			if (rootContext == this) {
